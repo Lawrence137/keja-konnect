@@ -1,26 +1,31 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-import Home from "./components/Home";
-import Search from "./components/Search";
-import LocationDetails from "./components/LocationDetails";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Search from "./pages/Search";
+import Map from "./pages/Map";
+import Saved from "./pages/Saved";
+import Login from "./pages/Login";
+
+// Create a client
+const queryClient = new QueryClient();
 
 function App() {
   return (
-    <Router>
-      <div className="min-h-screen bg-gray-100 flex flex-col">
-        <Header />
-        <main className="container mx-auto p-4 flex-grow">
+    <QueryClientProvider client={queryClient}>
+      <Router>
+        <Layout>
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/search" element={<Search />} />
-            <Route path="/location/:id" element={<LocationDetails />} />
+            <Route path="/map" element={<Map />} />
+            <Route path="/saved" element={<Saved />} />
+            <Route path="/login" element={<Login />} />
           </Routes>
-        </main>
-        <Footer />
-      </div>
-    </Router>
+        </Layout>
+      </Router>
+    </QueryClientProvider>
   );
 }
 
