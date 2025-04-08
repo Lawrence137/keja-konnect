@@ -1,14 +1,33 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 export default function Listings() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('all');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'all');
   const [priceRange, setPriceRange] = useState({ min: 0, max: 100000 });
   const [sortBy, setSortBy] = useState('price-asc');
   const [isLoading, setIsLoading] = useState(true);
+
+  // Update URL when category changes
+  useEffect(() => {
+    if (selectedCategory === 'all') {
+      searchParams.delete('category');
+    } else {
+      searchParams.set('category', selectedCategory);
+    }
+    setSearchParams(searchParams);
+  }, [selectedCategory, searchParams, setSearchParams]);
+
+  // Handle initial category from URL
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category');
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [searchParams]);
 
   // All properties data (in a real app, this would come from an API)
   const allProperties = [
