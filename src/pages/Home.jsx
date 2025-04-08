@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { HomeIcon, MapPinIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, MapPinIcon, BuildingOfficeIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 const features = [
   {
@@ -86,94 +86,128 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Hero Section */}
-      <section className="relative h-[70vh] overflow-hidden">
+      <section className="relative min-h-[85vh] overflow-hidden bg-gray-900">
+        {/* Background Image Slider */}
         <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2" 
-            alt="Luxury Home" 
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30"></div>
-        </div>
-        
-        <div className="relative z-10 container mx-auto px-4 h-full flex flex-col justify-center">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="text-5xl md:text-6xl font-bold text-white mb-4"
-          >
-            Find Your Perfect Home
-          </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl text-white/90 mb-8 max-w-2xl"
-          >
-            Discover the best rental properties in Lower Kabete, Wangige, and Kingeero. From cozy studios to luxury villas.
-          </motion.p>
-          
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="flex flex-col md:flex-row gap-4"
-          >
-            <Link 
-              to="/map" 
-              className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors text-center"
-            >
-              Explore on Map
-            </Link>
-            <Link 
-              to="/listings" 
-              className="px-6 py-3 bg-white text-gray-900 font-medium rounded-lg hover:bg-gray-100 transition-colors text-center"
-            >
-              View All Listings
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Search Section */}
-      <section className="py-12 bg-white shadow-sm">
-        <div className="container mx-auto px-4">
-          <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-xl shadow-lg p-4 md:p-6">
-              <h2 className="text-2xl font-semibold mb-4 text-center">Find Your Next Home</h2>
-              
-              <div className="flex flex-col md:flex-row gap-4">
-                <div className="flex-1">
-                  <input
-                    type="text"
-                    placeholder="Search by location or property name..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  />
-                </div>
-                
-                <div className="w-full md:w-48">
-                  <select
-                    value={selectedType}
-                    onChange={(e) => setSelectedType(e.target.value)}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                  >
-                    {propertyTypes.map(type => (
-                      <option key={type.id} value={type.id}>{type.name}</option>
-                    ))}
-                  </select>
-                </div>
-                
-                <button className="px-6 py-3 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors">
-                  Search
-                </button>
-              </div>
-            </div>
+          <div className="relative w-full h-full">
+            <img 
+              src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2" 
+              alt="Luxury Home" 
+              className="absolute inset-0 w-full h-full object-cover opacity-60"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-gray-900/70 via-gray-900/60 to-gray-900/90"></div>
           </div>
         </div>
+        
+        {/* Content */}
+        <div className="relative z-10 container mx-auto px-4 h-full">
+          <div className="h-full flex flex-col justify-center max-w-6xl mx-auto pt-20 pb-16">
+            {/* Main Content */}
+            <div className="text-center mb-8">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="inline-block"
+              >
+                <span className="px-4 py-2 rounded-full bg-indigo-600/20 text-indigo-400 text-sm font-medium mb-4 inline-block">
+                  Find Your Dream Home Today
+                </span>
+              </motion.div>
+              
+              <motion.h1 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.2 }}
+                className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
+              >
+                Discover Your Perfect
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400"> Living Space</span>
+              </motion.h1>
+              
+              <motion.p 
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.4 }}
+                className="text-xl text-gray-300 mb-12 max-w-3xl mx-auto"
+              >
+                Explore premium rental properties in Lower Kabete, Wangige, and Kingeero. 
+                From cozy studios to luxurious villas, find the perfect place to call home.
+              </motion.p>
+            </div>
+
+            {/* Search Box */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="max-w-4xl mx-auto w-full"
+            >
+              <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/20">
+                <div className="flex flex-col md:flex-row gap-4">
+                  <div className="flex-1 relative">
+                    <div className="absolute inset-y-0 left-4 flex items-center pointer-events-none">
+                      <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="Search by location or property name..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-12 pr-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                    />
+                  </div>
+                  
+                  <div className="md:w-48">
+                    <select
+                      value={selectedType}
+                      onChange={(e) => setSelectedType(e.target.value)}
+                      className="w-full px-4 py-4 bg-white/10 border border-white/20 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent appearance-none"
+                    >
+                      {propertyTypes.map(type => (
+                        <option key={type.id} value={type.id} className="text-gray-900">
+                          {type.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  
+                  <Link 
+                    to="/listings" 
+                    className="md:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+                  >
+                    <MagnifyingGlassIcon className="h-5 w-5" />
+                    <span>Search</span>
+                  </Link>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Quick Stats */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12"
+            >
+              {[
+                { label: 'Properties', value: '200+' },
+                { label: 'Locations', value: '3' },
+                { label: 'Happy Tenants', value: '1000+' },
+                { label: 'Property Types', value: '6' },
+              ].map((stat, index) => (
+                <div key={index} className="text-center p-4 rounded-xl bg-white/5 backdrop-blur-sm border border-white/10">
+                  <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
+                  <div className="text-sm text-gray-400">{stat.label}</div>
+                </div>
+              ))}
+            </motion.div>
+          </div>
+        </div>
+
+        {/* Decorative Elements */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent z-10"></div>
+        <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-gray-900 to-transparent z-10"></div>
       </section>
 
       {/* Featured Properties */}
