@@ -291,9 +291,9 @@ export default function Map() {
   };
 
   return (
-    <div className="w-full h-[calc(100vh-6rem)]">
+    <div className="w-full h-[calc(100vh-6rem)] p-4">
       {/* Category Filter */}
-      <div className="absolute top-4 right-4 z-10 bg-white rounded-lg shadow-lg p-4 max-w-xs">
+      <div className="absolute top-8 right-8 z-10 bg-white rounded-lg shadow-lg p-4 max-w-xs">
         <h3 className="text-lg font-semibold mb-3">Property Types</h3>
         <div className="space-y-2">
           <label className="flex items-center gap-2">
@@ -336,15 +336,15 @@ export default function Map() {
       </div>
 
       {/* Map Container */}
-      <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
+      <div className="w-full h-full rounded-lg overflow-hidden shadow-lg border border-gray-200">
         <MapContainer
           center={[-1.1833, 36.7333]}
           zoom={14}
           style={{ height: '100%', width: '100%' }}
           className="z-0"
-          zoomControl={false} // Disable default zoom control
+          zoomControl={false}
         >
-          <ZoomControl position="bottomleft" /> {/* Move zoom control to top left */}
+          <ZoomControl position="bottomleft" />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

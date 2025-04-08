@@ -35,7 +35,7 @@ const faqs = [
 const contactInfo = [
   {
     name: 'Phone',
-    value: '+254 728 846 560',
+    value: '+254 718 266 432',
     icon: PhoneIcon,
   },
   {
