@@ -179,8 +179,8 @@ export default function Home() {
       {/* Featured Properties */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="flex justify-between items-center mb-8">
-            <h2 className="text-3xl font-bold">Featured Properties</h2>
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8">
+            <h2 className="text-3xl font-bold mb-2 sm:mb-0">Featured Properties</h2>
             <Link to="/listings" className="text-indigo-600 font-medium hover:text-indigo-800">
               View All
             </Link>
