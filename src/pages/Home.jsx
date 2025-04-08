@@ -167,7 +167,7 @@ export default function Home() {
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Smooth scroll progress indicator */}
       <motion.div
-        className="fixed top-0 left-0 right-0 h-1 bg-indigo-600 origin-left z-50"
+        className="fixed top-0 left-0 right-0 h-1 bg-red-600 origin-left z-50"
         style={{ scaleX }}
       />
 
@@ -196,7 +196,7 @@ export default function Home() {
                 transition={{ duration: 0.6 }}
                 className="inline-block"
               >
-                <span className="px-4 py-2 rounded-full bg-indigo-600/20 text-indigo-400 text-sm font-medium mb-4 inline-block">
+                <span className="px-4 py-2 rounded-full bg-green-600/50 text-green-400 text-sm font-medium mb-4 inline-block">
                   Find Your Dream Home Today
                 </span>
               </motion.div>
@@ -208,7 +208,7 @@ export default function Home() {
                 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight"
               >
                 Discover Your Perfect
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-400"> Living Space</span>
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-red-500"> Living Space</span>
               </motion.h1>
               
               <motion.p 
@@ -260,7 +260,7 @@ export default function Home() {
                   
                   <Link 
                     to="/listings" 
-                    className="md:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
+                    className="md:w-auto px-8 py-4 bg-gradient-to-r from-green-600 to-green-900 hover:from-green-400 hover:to-green-500 text-white font-medium rounded-xl transition-all duration-200 flex items-center justify-center gap-2"
                   >
                     <MagnifyingGlassIcon className="h-5 w-5" />
                     <span>Search</span>
@@ -294,6 +294,92 @@ export default function Home() {
         {/* Decorative Elements */}
         <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-gray-900 to-transparent z-10"></div>
         <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-gray-900 to-transparent z-10"></div>
+      </section>
+
+      {/* Features Section */}
+      <section className="py-24 bg-green-600 overflow-hidden relative">
+        {/* Modern geometric patterns */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob"></div>
+          <div className="absolute -bottom-8 left-0 w-96 h-96 bg-green-500 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-2000"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-green-400 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob animation-delay-4000"></div>
+        </div>
+
+        <div className="container mx-auto px-4 relative z-10">
+          <motion.div 
+            className="text-center mb-16 relative"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="inline-flex items-center justify-center space-x-2 mb-4">
+              <span className="h-px w-8 bg-green-800"></span>
+              <span className="bg-green-900/50 text-black-900 text-sm font-medium px-4 py-2 rounded-full">
+                Why Choose Us
+              </span>
+              <span className="h-px w-8 bg-green-800"></span>
+            </div>
+            
+            <h2 className="text-3xl md:text-4xl font-bold text-black-900 tracking-tight">
+              Experience the Keja Konnect
+            </h2>
+            
+            <div className="relative mt-2">
+              <h3 className="text-2xl md:text-3xl font-bold text-black-400">
+                Difference
+              </h3>
+              <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-8 h-8 text-green-900">
+                <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+              </div>
+            </div>
+
+            <p className="text-lg text-black-500 max-w-2xl mx-auto font-medium mt-4">
+              We make finding your next home simple, seamless, and stress-free
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            {features.map((feature, index) => (
+              <motion.div
+                key={feature.name}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                className="group relative"
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-green-300 to-green-200 rounded-3xl transform transition-transform md:group-hover:scale-105 duration-500 scale-105 md:scale-100"></div>
+                <div className="relative p-8 rounded-3xl border border-green-300 md:hover:border-green-500 border-green-500 md:border-green-300 transition-colors duration-500 bg-white/10 backdrop-blur-sm">
+                  {/* Icon container with gradient background */}
+                  <div className="mb-6 relative">
+                    <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-green-600 to-green-500 p-4 transform rotate-0 md:-rotate-6 transition-transform md:group-hover:rotate-0">
+                      <feature.icon className="w-full h-full text-white transform rotate-0 md:rotate-6 transition-transform md:group-hover:rotate-0" />
+                    </div>
+                    {/* Decorative dot pattern */}
+                    <div className="absolute -right-4 -top-4 w-20 h-20 bg-[radial-gradient(circle,rgba(255,255,255,0.3)_2px,transparent_2px)] bg-[length:10px_10px]"></div>
+                  </div>
+
+                  <h3 className="text-2xl font-bold mb-4 text-green-700 md:text-gray-900 md:group-hover:text-green-700 transition-colors">
+                    {feature.name}
+                  </h3>
+                  <p className="text-gray-700 leading-relaxed">
+                    {feature.description}
+                  </p>
+
+                  {/* Hover indicator */}
+                  <div className="absolute bottom-8 right-8 w-8 h-8 rounded-full bg-white/80 text-green-600 flex items-center justify-center opacity-100 translate-y-0 md:opacity-0 md:translate-y-2 md:group-hover:opacity-100 md:group-hover:translate-y-0 transition-all duration-500">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
       </section>
 
       {/* Featured Properties */}
@@ -371,7 +457,7 @@ export default function Home() {
 
                     {/* New Tag */}
                     {property.isNew && (
-                      <div className="absolute top-4 left-4 bg-indigo-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium">
+                      <div className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium">
                         New
                       </div>
                     )}
@@ -518,7 +604,7 @@ export default function Home() {
       </div>
 
       {/* CTA Section */}
-      <section className="py-16 bg-indigo-600 text-white">
+      <section className="py-16 bg-gradient-to-b from-red-700 to-red-500 text-white">
         <motion.div 
           className="container mx-auto px-4 text-center"
           {...scrollReveal}

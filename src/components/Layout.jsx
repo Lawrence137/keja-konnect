@@ -21,7 +21,7 @@ export default function Layout({ children }) {
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
             <Link to="/" className="-m-1.5 p-1.5">
-              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Keja Konnect</span>
+              <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">Keja Konnect</span>
             </Link>
           </div>
           <div className="flex lg:hidden">
@@ -41,8 +41,8 @@ export default function Layout({ children }) {
                 to={item.href}
                 className={`text-sm font-semibold leading-6 ${
                   location.pathname === item.href
-                    ? 'text-indigo-600'
-                    : 'text-gray-900 hover:text-indigo-600'
+                    ? 'text-red-600'
+                    : 'text-gray-900 hover:text-red-600'
                 } transition-colors`}
               >
                 {item.name}
@@ -52,7 +52,7 @@ export default function Layout({ children }) {
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <Link
               to="/login"
-              className="text-sm font-semibold leading-6 text-gray-900 hover:text-indigo-600 transition-colors"
+              className="text-sm font-semibold leading-6 text-gray-900 hover:text-red-600 transition-colors"
             >
               Log in <span aria-hidden="true">&rarr;</span>
             </Link>
@@ -73,7 +73,7 @@ export default function Layout({ children }) {
           <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm">
             <div className="flex items-center justify-between">
               <Link to="/" className="-m-1.5 p-1.5">
-                <span className="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-blue-600 bg-clip-text text-transparent">Keja Konnect</span>
+                <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">Keja Konnect</span>
               </Link>
               <button
                 type="button"
@@ -93,7 +93,7 @@ export default function Layout({ children }) {
                       to={item.href}
                       className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 transition-colors ${
                         location.pathname === item.href
-                          ? 'text-indigo-600 bg-indigo-50'
+                          ? 'text-red-600 bg-red-50'
                           : 'text-gray-900 hover:bg-gray-50'
                       }`}
                       onClick={() => setMobileMenuOpen(false)}
@@ -105,7 +105,7 @@ export default function Layout({ children }) {
                 <div className="py-6">
                   <Link
                     to="/login"
-                    className="block w-full rounded-full bg-indigo-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
+                    className="block w-full rounded-full bg-green-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-green-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
                     onClick={() => setMobileMenuOpen(false)}
                   >
                     Log in
