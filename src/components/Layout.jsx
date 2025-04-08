@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import Footer from './Footer';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -12,6 +13,7 @@ const navigation = [
 export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
+  const isHomePage = location.pathname === '/';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -118,6 +120,8 @@ export default function Layout({ children }) {
       <main className="flex-1">
         {children}
       </main>
+
+      {isHomePage && <Footer />}
     </div>
   );
 } 
