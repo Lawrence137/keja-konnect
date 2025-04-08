@@ -213,16 +213,29 @@ const createCustomIcon = (category) => {
     className: 'custom-marker',
     html: `
       <div style="
-        background-color: ${colors[category]};
-        width: 24px;
-        height: 24px;
-        border-radius: 50%;
-        border: 3px solid white;
-        box-shadow: 0 0 0 2px ${colors[category]};
-      "></div>
+        width: 30px;
+        height: 40px;
+        position: relative;
+      ">
+        <svg viewBox="0 0 24 36" style="
+          width: 100%;
+          height: 100%;
+          position: absolute;
+          top: 0;
+          left: 0;
+        ">
+          <path 
+            d="M12 0C5.383 0 0 5.383 0 12c0 9 12 24 12 24s12-15 12-24c0-6.617-5.383-12-12-12zm0 16c-2.21 0-4-1.79-4-4s1.79-4 4-4 4 1.79 4 4-1.79 4-4 4z"
+            fill="${colors[category]}"
+            stroke="white"
+            stroke-width="1"
+          />
+        </svg>
+      </div>
     `,
-    iconSize: [24, 24],
-    iconAnchor: [12, 12],
+    iconSize: [30, 40],
+    iconAnchor: [15, 40], // Point of the icon which will correspond to marker's location
+    popupAnchor: [0, -40] // Point from which the popup should open relative to the iconAnchor
   });
 };
 
@@ -251,7 +264,16 @@ function UserLocationMarker() {
       position={position}
       icon={L.divIcon({
         className: 'user-location-marker',
-        html: '<div style="background-color: #4F46E5; width: 16px; height: 16px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 0 2px #4F46E5;"></div>',
+        html: `
+          <div style="
+            width: 16px;
+            height: 16px;
+            background-color: #4F46E5;
+            border: 3px solid white;
+            border-radius: 50%;
+            box-shadow: 0 0 0 2px #4F46E5;
+          "></div>
+        `,
         iconSize: [16, 16],
         iconAnchor: [8, 8],
       })}
