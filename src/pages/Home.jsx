@@ -1,7 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useSpring, useReducedMotion } from 'framer-motion';
 import { HomeIcon, MapPinIcon, BuildingOfficeIcon, MagnifyingGlassIcon } from '@heroicons/react/24/outline';
+
+// Custom hook for optimized scroll reveal
+const useScrollReveal = (threshold = 0.1) => {
+  const prefersReducedMotion = useReducedMotion();
+  
+  if (prefersReducedMotion) {
+    // Return no-op animation if user prefers reduced motion
+    return {
+      initial: {},
+      animate: {},
+      transition: {},
+      viewport: { once: true }
+    };
+  }
+
+  return {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5, ease: "easeOut" },
+    viewport: { once: true, amount: threshold }
+  };
+};
+
+// Animation variants
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.2
+    }
+  }
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
+  }
+};
 
 const features = [
   {
@@ -24,6 +69,17 @@ const features = [
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedType, setSelectedType] = useState('all');
+  
+  // Smooth scroll progress
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, {
+    stiffness: 100,
+    damping: 30,
+    restDelta: 0.001
+  });
+
+  // Get scroll reveal animation config
+  const scrollReveal = useScrollReveal();
 
   // Featured properties for the homepage
   const featuredProperties = [
@@ -85,6 +141,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
+      {/* Smooth scroll progress indicator */}
+      <motion.div
+        className="fixed top-0 left-0 right-0 h-1 bg-indigo-600 origin-left z-50"
+        style={{ scaleX }}
+      />
+
       {/* Hero Section */}
       <section className="relative min-h-[85vh] overflow-hidden bg-gray-900">
         {/* Background Image Slider */}
@@ -213,28 +275,41 @@ export default function Home() {
       {/* Featured Properties */}
       <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8">
+          <motion.div 
+            className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-8"
+            {...scrollReveal}
+          >
             <h2 className="text-3xl font-bold mb-2 sm:mb-0">Featured Properties</h2>
             <Link to="/listings" className="text-indigo-600 font-medium hover:text-indigo-800">
               View All
             </Link>
-          </div>
+          </motion.div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+          >
             {filteredProperties.map((property) => (
               <motion.div
                 key={property.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+                variants={itemVariants}
+                className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow will-change-transform"
+                style={{
+                  contain: 'content',
+                  backfaceVisibility: 'hidden',
+                  transform: 'translateZ(0)'
+                }}
               >
                 <div className="relative h-48">
                   <img 
                     src={property.image} 
                     alt={property.title} 
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div className="absolute top-3 right-3 bg-white px-2 py-1 rounded-md text-sm font-medium">
                     KES {property.price.toLocaleString()}
@@ -263,93 +338,102 @@ export default function Home() {
                 </div>
               </motion.div>
             ))}
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Browse by Category Section */}
       <div className="py-16 bg-gray-50">
         <div className="container mx-auto px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">Browse by Category</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* AirBnB Category */}
-            <Link 
-              to="/listings?category=airbnb"
-              className="group"
-            >
-              <div className="bg-[#FF385C] rounded-2xl p-12 text-center text-white transition-transform group-hover:scale-105">
-                <div className="w-16 h-16 mx-auto mb-6">
-                  <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold mb-2">AirBnB Rentals</h3>
-                <p className="text-white/80">Find short-term rentals with all amenities included</p>
-                <div className="mt-6">
-                  <span className="inline-flex items-center text-sm font-medium">
-                    Browse AirBnB
-                    <svg className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+          <motion.h2 
+            className="text-3xl font-bold text-center mb-12"
+            {...scrollReveal}
+          >
+            Browse by Category
+          </motion.h2>
+          <motion.div 
+            className="grid grid-cols-1 md:grid-cols-3 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+          >
+            {/* Category cards with optimized animations */}
+            <motion.div variants={itemVariants} className="will-change-transform" style={{ contain: 'content' }}>
+              <Link to="/listings?category=airbnb" className="group block">
+                <div className="bg-[#FF385C] rounded-2xl p-12 text-center text-white transition-transform group-hover:scale-105">
+                  <div className="w-16 h-16 mx-auto mb-6">
+                    <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                     </svg>
-                  </span>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">AirBnB Rentals</h3>
+                  <p className="text-white/80">Find short-term rentals with all amenities included</p>
+                  <div className="mt-6">
+                    <span className="inline-flex items-center text-sm font-medium">
+                      Browse AirBnB
+                      <svg className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </motion.div>
 
-            {/* Agent Category */}
-            <Link 
-              to="/listings?category=agent"
-              className="group"
-            >
-              <div className="bg-indigo-600 rounded-2xl p-12 text-center text-white transition-transform group-hover:scale-105">
-                <div className="w-16 h-16 mx-auto mb-6">
-                  <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold mb-2">Agent Managed</h3>
-                <p className="text-white/80">Properties managed by professional real estate agents</p>
-                <div className="mt-6">
-                  <span className="inline-flex items-center text-sm font-medium">
-                    Browse Agent Properties
-                    <svg className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            <motion.div variants={itemVariants} className="will-change-transform" style={{ contain: 'content' }}>
+              <Link to="/listings?category=agent" className="group block">
+                <div className="bg-indigo-600 rounded-2xl p-12 text-center text-white transition-transform group-hover:scale-105">
+                  <div className="w-16 h-16 mx-auto mb-6">
+                    <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
-                  </span>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">Agent Managed</h3>
+                  <p className="text-white/80">Properties managed by professional real estate agents</p>
+                  <div className="mt-6">
+                    <span className="inline-flex items-center text-sm font-medium">
+                      Browse Agent Properties
+                      <svg className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Link>
+              </Link>
+            </motion.div>
 
-            {/* Landlord Category */}
-            <Link 
-              to="/listings?category=landlord"
-              className="group"
-            >
-              <div className="bg-emerald-600 rounded-2xl p-12 text-center text-white transition-transform group-hover:scale-105">
-                <div className="w-16 h-16 mx-auto mb-6">
-                  <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <h3 className="text-2xl font-bold mb-2">Direct from Landlord</h3>
-                <p className="text-white/80">Rent directly from property owners without intermediaries</p>
-                <div className="mt-6">
-                  <span className="inline-flex items-center text-sm font-medium">
-                    Browse Direct Rentals
-                    <svg className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            <motion.div variants={itemVariants} className="will-change-transform" style={{ contain: 'content' }}>
+              <Link to="/listings?category=landlord" className="group block">
+                <div className="bg-emerald-600 rounded-2xl p-12 text-center text-white transition-transform group-hover:scale-105">
+                  <div className="w-16 h-16 mx-auto mb-6">
+                    <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                     </svg>
-                  </span>
+                  </div>
+                  <h3 className="text-2xl font-bold mb-2">Direct from Landlord</h3>
+                  <p className="text-white/80">Rent directly from property owners without intermediaries</p>
+                  <div className="mt-6">
+                    <span className="inline-flex items-center text-sm font-medium">
+                      Browse Direct Rentals
+                      <svg className="w-4 h-4 ml-1 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                      </svg>
+                    </span>
+                  </div>
                 </div>
-              </div>
-            </Link>
-          </div>
+              </Link>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 
       {/* CTA Section */}
       <section className="py-16 bg-indigo-600 text-white">
-        <div className="container mx-auto px-4 text-center">
+        <motion.div 
+          className="container mx-auto px-4 text-center"
+          {...scrollReveal}
+        >
           <h2 className="text-3xl font-bold mb-4">Ready to Find Your New Home?</h2>
           <p className="text-xl mb-8 max-w-2xl mx-auto">
             Explore our map to find the perfect rental property in your desired location.
@@ -360,7 +444,7 @@ export default function Home() {
           >
             Explore Map
           </Link>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
