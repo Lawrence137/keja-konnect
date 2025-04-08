@@ -5,7 +5,7 @@ import Footer from './Footer';
 
 const navigation = [
   { name: 'Home', href: '/' },
-  { name: 'Search', href: '/search' },
+  { name: 'Listings', href: '/listings' },
   { name: 'Map', href: '/map' },
   { name: 'Saved', href: '/saved' },
 ];

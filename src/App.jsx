@@ -7,6 +7,7 @@ import Search from "./pages/Search";
 import Map from "./pages/Map";
 import Saved from "./pages/Saved";
 import Login from "./pages/Login";
+import Listings from "./pages/Listings";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ function App() {
             <Route path="/map" element={<Map />} />
             <Route path="/saved" element={<Saved />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/listings" element={<Listings />} />
           </Routes>
         </Layout>
       </Router>
