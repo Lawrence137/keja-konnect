@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, ZoomControl } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 
@@ -17,7 +17,7 @@ const center = {
   lng: 36.7333,
 };
 
-// Mock property data with coordinates
+// Mock property data with categories - more spread out across the area
 const properties = [
   {
     id: 1,
@@ -25,8 +25,11 @@ const properties = [
     location: 'Lower Kabete, Near Junction',
     price: 15000,
     type: 'studio',
-    position: { lat: -1.1833, lng: 36.7333 },
+    category: 'airbnb',
+    position: { lat: -1.1833, lng: 36.7333 }, // Near Junction
     image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+    rating: 4.5,
+    amenities: ['Wifi', 'Kitchen', 'Workspace'],
   },
   {
     id: 2,
@@ -34,10 +37,194 @@ const properties = [
     location: 'Lower Kabete, Near Market',
     price: 25000,
     type: '2bed',
-    position: { lat: -1.1843, lng: 36.7343 },
+    category: 'agent',
+    position: { lat: -1.1943, lng: 36.7243 }, // More towards the west
     image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6',
+    agent: 'Prime Realtors',
+    contact: '+254700000001',
   },
+  {
+    id: 3,
+    title: 'Cozy 1 Bedroom Apartment',
+    location: 'Lower Kabete, Near School',
+    price: 18000,
+    type: '1bed',
+    category: 'landlord',
+    position: { lat: -1.1753, lng: 36.7453 }, // More towards the east
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+    landlord: 'John Doe',
+    contact: '+254700000002',
+  },
+  {
+    id: 4,
+    title: 'Luxury AirBnB Villa',
+    location: 'Lower Kabete, Riverside',
+    price: 35000,
+    type: 'villa',
+    category: 'airbnb',
+    position: { lat: -1.1763, lng: 36.7163 }, // More towards the northwest
+    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6',
+    rating: 4.8,
+    amenities: ['Pool', 'Wifi', 'Kitchen', 'Parking'],
+  },
+  {
+    id: 5,
+    title: 'Modern 3 Bedroom Apartment',
+    location: 'Lower Kabete, Near Mall',
+    price: 45000,
+    type: '3bed',
+    category: 'agent',
+    position: { lat: -1.1923, lng: 36.7523 }, // More towards the southeast
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+    agent: 'Elite Properties',
+    contact: '+254700000003',
+  },
+  {
+    id: 6,
+    title: 'Charming Studio with Garden',
+    location: 'Lower Kabete, Green Zone',
+    price: 20000,
+    type: 'studio',
+    category: 'landlord',
+    position: { lat: -1.1693, lng: 36.7293 }, // More towards the north
+    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6',
+    landlord: 'Jane Smith',
+    contact: '+254700000004',
+  },
+  {
+    id: 7,
+    title: 'Executive AirBnB Suite',
+    location: 'Lower Kabete, Business District',
+    price: 28000,
+    type: 'suite',
+    category: 'airbnb',
+    position: { lat: -1.1883, lng: 36.7423 }, // More towards the east
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+    rating: 4.9,
+    amenities: ['Wifi', 'Kitchen', 'Workspace', 'Gym', 'Pool'],
+  },
+  {
+    id: 8,
+    title: 'Family Home with Garden',
+    location: 'Lower Kabete, Residential Area',
+    price: 55000,
+    type: '4bed',
+    category: 'agent',
+    position: { lat: -1.1803, lng: 36.7193 }, // More towards the west
+    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6',
+    agent: 'Home Finder Kenya',
+    contact: '+254700000005',
+  },
+  {
+    id: 9,
+    title: 'Karura Town Apartment',
+    location: 'Karura, Near Market',
+    price: 16000,
+    type: '1bed',
+    category: 'landlord',
+    position: { lat: -1.2123, lng: 36.7253 }, // Wangige area
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+    landlord: 'Mary Wanjiku',
+    contact: '+254700000006',
+  },
+  {
+    id: 10,
+    title: 'Kingeero Heights',
+    location: 'Kingeero Center',
+    price: 22000,
+    type: '2bed',
+    category: 'agent',
+    position: { lat: -1.2033, lng: 36.7153 }, // Kingeero area
+    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6',
+    agent: 'Kingeero Properties',
+    contact: '+254700000007',
+  },
+  {
+    id: 11,
+    title: 'Lower Kabete Road Villa',
+    location: 'Lower Kabete Road, Near USIU',
+    price: 42000,
+    type: '3bed',
+    category: 'airbnb',
+    position: { lat: -1.1893, lng: 36.7473 }, // Along Lower Kabete Road
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+    rating: 4.7,
+    amenities: ['Pool', 'Wifi', 'Kitchen', 'Garden', 'Parking'],
+  },
+  {
+    id: 12,
+    title: 'Wangige Shopping Plaza Apartment',
+    location: 'Wangige, Near KCB',
+    price: 25000,
+    type: '2bed',
+    category: 'agent',
+    position: { lat: -1.2143, lng: 36.7273 }, // Wangige shopping area
+    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6',
+    agent: 'Wangige Realtors',
+    contact: '+254700000008',
+  },
+  {
+    id: 13,
+    title: 'Kabete Garden Homes',
+    location: 'Kabete, Off Main Road',
+    price: 18000,
+    type: '1bed',
+    category: 'landlord',
+    position: { lat: -1.2353536, lng: 36.7230976 }, // Kingeero residential area
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+    landlord: 'James Kamau',
+    contact: '+254700000009',
+  },
+  {
+    id: 14,
+    title: 'Lower Kabete Executive Suites',
+    location: 'Lower Kabete Road, Near Alliance',
+    price: 35000,
+    type: '2bed',
+    category: 'airbnb',
+    position: { lat: -1.1853, lng: 36.7393 }, // Along Lower Kabete Road
+    image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6',
+    rating: 4.6,
+    amenities: ['Wifi', 'Kitchen', 'Workspace', 'Security', 'Parking'],
+  },
+  {
+    id: 15,
+    title: 'Wangige Student Apartment',
+    location: 'Wangige, Near St. Pauls',
+    price: 12000,
+    type: 'studio',
+    category: 'landlord',
+    position: { lat: -1.2103, lng: 36.7233 }, // Wangige educational area
+    image: 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267',
+    landlord: 'Peter Njoroge',
+    contact: '+254700000010',
+  }
 ];
+
+// Custom markers for different categories
+const createCustomIcon = (category) => {
+  const colors = {
+    airbnb: '#FF385C', // AirBnB red
+    agent: '#4F46E5', // Indigo
+    landlord: '#059669', // Emerald
+  };
+
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `
+      <div style="
+        background-color: ${colors[category]};
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px ${colors[category]};
+      "></div>
+    `,
+    iconSize: [24, 24],
+    iconAnchor: [12, 12],
+  });
+};
 
 // Custom component to handle user location
 function UserLocationMarker() {
@@ -75,53 +262,100 @@ function UserLocationMarker() {
 }
 
 export default function Map() {
-  const [selectedProperty, setSelectedProperty] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState({
+    airbnb: true,
+    agent: true,
+    landlord: true,
+  });
 
-  const handleGetDirections = (property) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          // Open directions in a new tab using OpenStreetMap routing
-          const directionsUrl = `https://www.openstreetmap.org/directions?from=${latitude},${longitude}&to=${property.position.lat},${property.position.lng}`;
-          window.open(directionsUrl, '_blank');
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-          // If we can't get the user's location, just open the destination
-          const directionsUrl = `https://www.openstreetmap.org/?mlat=${property.position.lat}&mlon=${property.position.lng}&zoom=15`;
-          window.open(directionsUrl, '_blank');
-        }
-      );
-    } else {
-      // If geolocation is not supported, just open the destination
-      const directionsUrl = `https://www.openstreetmap.org/?mlat=${property.position.lat}&mlon=${property.position.lng}&zoom=15`;
-      window.open(directionsUrl, '_blank');
-    }
+  const [filteredProperties, setFilteredProperties] = useState(properties);
+
+  // Filter properties based on selected categories
+  useEffect(() => {
+    const filtered = properties.filter(
+      (property) => selectedCategories[property.category]
+    );
+    setFilteredProperties(filtered);
+  }, [selectedCategories]);
+
+  const toggleCategory = (category) => {
+    setSelectedCategories((prev) => ({
+      ...prev,
+      [category]: !prev[category],
+    }));
+  };
+
+  const getDirectionsUrl = (property) => {
+    // Google Maps URL with language parameter set to English
+    return `https://www.google.com/maps/dir/?api=1&destination=${property.position.lat},${property.position.lng}&hl=en`;
   };
 
   return (
     <div className="w-full h-[calc(100vh-6rem)]">
-      <div className="w-full h-full rounded-lg overflow-hidden shadow-lg bg-gray-100">
+      {/* Category Filter */}
+      <div className="absolute top-4 right-4 z-10 bg-white rounded-lg shadow-lg p-4 max-w-xs">
+        <h3 className="text-lg font-semibold mb-3">Property Types</h3>
+        <div className="space-y-2">
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={selectedCategories.airbnb}
+              onChange={() => toggleCategory('airbnb')}
+              className="rounded border-gray-300 text-[#FF385C] focus:ring-[#FF385C]"
+            />
+            <span className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-[#FF385C]"></span>
+              AirBnB Rentals
+            </span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={selectedCategories.agent}
+              onChange={() => toggleCategory('agent')}
+              className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+            />
+            <span className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-indigo-600"></span>
+              Agent Managed
+            </span>
+          </label>
+          <label className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              checked={selectedCategories.landlord}
+              onChange={() => toggleCategory('landlord')}
+              className="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500"
+            />
+            <span className="flex items-center gap-2">
+              <span className="w-3 h-3 rounded-full bg-emerald-600"></span>
+              Direct from Landlord
+            </span>
+          </label>
+        </div>
+      </div>
+
+      {/* Map Container */}
+      <div className="w-full h-full rounded-lg overflow-hidden shadow-lg">
         <MapContainer
-          center={[center.lat, center.lng]}
+          center={[-1.1833, 36.7333]}
           zoom={14}
           style={{ height: '100%', width: '100%' }}
-          className="z-10"
+          className="z-0"
+          zoomControl={false} // Disable default zoom control
         >
+          <ZoomControl position="bottomleft" /> {/* Move zoom control to top left */}
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <UserLocationMarker />
           
-          {properties.map((property) => (
+          {filteredProperties.map((property) => (
             <Marker
               key={property.id}
               position={[property.position.lat, property.position.lng]}
-              eventHandlers={{
-                click: () => setSelectedProperty(property),
-              }}
+              icon={createCustomIcon(property.category)}
             >
               <Popup>
                 <div className="max-w-xs p-2">
@@ -135,9 +369,36 @@ export default function Map() {
                   <p className="mt-1 text-base font-medium text-gray-900">
                     KES {property.price.toLocaleString()}/month
                   </p>
+                  {property.category === 'airbnb' && (
+                    <div className="mt-2">
+                      <div className="flex items-center gap-1">
+                        <svg className="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <span>{property.rating}</span>
+                      </div>
+                      <div className="mt-1 flex flex-wrap gap-1">
+                        {property.amenities.map((amenity, index) => (
+                          <span key={index} className="inline-block px-2 py-0.5 text-xs bg-gray-100 rounded">
+                            {amenity}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {(property.category === 'agent' || property.category === 'landlord') && (
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-600">
+                        {property.category === 'agent' ? `Agent: ${property.agent}` : `Landlord: ${property.landlord}`}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Contact: {property.contact}
+                      </p>
+                    </div>
+                  )}
                   <button
+                    onClick={() => window.open(getDirectionsUrl(property), '_blank')}
                     className="mt-2 w-full rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500"
-                    onClick={() => handleGetDirections(property)}
                   >
                     Get Directions
                   </button>
