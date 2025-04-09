@@ -13,7 +13,7 @@ import {
 
 const quickLinks = [
   { name: 'Home', href: '/', icon: HomeIcon },
-  { name: 'Search', href: '/search', icon: MapPinIcon },
+  { name: 'Listings', href: '/listings', icon: MapPinIcon },
   { name: 'Saved', href: '/saved', icon: BookmarkIcon },
 ];
 
