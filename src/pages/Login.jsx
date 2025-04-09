@@ -1,26 +1,55 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { auth, db } from '../firebase/config';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
-export default function Login() {
+const Login = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    userType: 'tenant' // Default to tenant
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login with:', formData);
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
+      
+      // Fetch user details from Firestore
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+      if (userDoc.exists()) {
+        const userData = userDoc.data();
+        // Store user type in localStorage for access across the app
+        localStorage.setItem('userType', userData.userType);
+        localStorage.setItem('userName', userData.fullName);
+        
+        // Redirect based on user type
+        switch (userData.userType) {
+          case 'tenant':
+            navigate('/tenant-dashboard');
+            break;
+          case 'landlord':
+            navigate('/landlord-dashboard');
+            break;
+          case 'agent':
+            navigate('/agent-dashboard');
+            break;
+          default:
+            navigate('/');
+        }
+      }
+    } catch (error) {
+      console.error('Error during login:', error);
+      alert(error.message);
+    }
   };
 
   return (
@@ -66,32 +95,6 @@ export default function Login() {
             </div>
 
             <div>
-              <label htmlFor="userType" className="block text-sm font-medium text-green-100 mb-1">
-                I am a
-              </label>
-              <div className="relative">
-                <select
-                  id="userType"
-                  name="userType"
-                  required
-                  value={formData.userType}
-                  onChange={handleChange}
-                  className="block w-full rounded-lg bg-white/10 border border-white/20 py-2.5 px-4 text-white focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all appearance-none"
-                >
-                  <option value="tenant" className="bg-green-900 text-white">Tenant</option>
-                  <option value="landlord" className="bg-green-900 text-white">Landlord</option>
-                  <option value="agent" className="bg-green-900 text-white">Agent</option>
-                </select>
-                <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-green-500/20 to-transparent pointer-events-none"></div>
-                <div className="absolute right-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
-                  <svg className="w-5 h-5 text-green-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <div>
               <label htmlFor="password" className="block text-sm font-medium text-green-100 mb-1">
                 Password
               </label>
@@ -117,7 +120,7 @@ export default function Login() {
                   id="remember-me"
                   name="remember-me"
                   type="checkbox"
-                  className="h-4 w-4 rounded border-white/20 text-red-500 focus:ring-red-500 bg-white/10"
+                  className="h-4 w-4 text-red-500 focus:ring-red-500 border-gray-300 rounded"
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-green-100">
                   Remember me
@@ -125,8 +128,8 @@ export default function Login() {
               </div>
 
               <div className="text-sm">
-                <a href="#" className="font-medium text-red-400 hover:text-red-300 transition-colors">
-                  Forgot password?
+                <a href="#" className="font-medium text-red-400 hover:text-red-300">
+                  Forgot your password?
                 </a>
               </div>
             </div>
@@ -156,4 +159,6 @@ export default function Login() {
       </motion.div>
     </div>
   );
-} 
+};
+
+export default Login; 

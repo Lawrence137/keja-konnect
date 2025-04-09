@@ -1,28 +1,65 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { auth, db } from '../firebase/config';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
-export default function SignUp() {
+const SignUp = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: '',
+    fullName: '',
     email: '',
+    userType: 'tenant',
     password: '',
     confirmPassword: '',
-    userType: 'tenant' // Default to tenant
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log('Sign up with:', formData);
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match');
+      return;
+    }
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
+      
+      // Save user data to Firestore
+      await setDoc(doc(db, 'users', user.uid), {
+        fullName: formData.fullName,
+        email: formData.email,
+        userType: formData.userType,
+        createdAt: new Date().toISOString()
+      });
+
+      // Store user info in localStorage
+      localStorage.setItem('userType', formData.userType);
+      localStorage.setItem('userName', formData.fullName);
+
+      // Redirect based on user type
+      switch (formData.userType) {
+        case 'tenant':
+          navigate('/tenant-dashboard');
+          break;
+        case 'landlord':
+          navigate('/landlord-dashboard');
+          break;
+        case 'agent':
+          navigate('/agent-dashboard');
+          break;
+        default:
+          navigate('/');
+      }
+    } catch (error) {
+      console.error('Error during sign up:', error);
+      alert(error.message);
+    }
   };
 
   return (
@@ -48,17 +85,17 @@ export default function SignUp() {
           
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="name" className="block text-sm font-medium text-green-100 mb-1">
+              <label htmlFor="fullName" className="block text-sm font-medium text-green-100 mb-1">
                 Full Name
               </label>
               <div className="relative">
                 <input
-                  id="name"
-                  name="name"
+                  id="fullName"
+                  name="fullName"
                   type="text"
                   autoComplete="name"
                   required
-                  value={formData.name}
+                  value={formData.fullName}
                   onChange={handleChange}
                   className="block w-full rounded-lg bg-white/10 border border-white/20 py-2.5 px-4 text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                   placeholder="John Doe"
@@ -178,4 +215,6 @@ export default function SignUp() {
       </motion.div>
     </div>
   );
-} 
+};
+
+export default SignUp; 
