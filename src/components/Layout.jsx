@@ -45,10 +45,10 @@ export default function Layout({ children }) {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`text-sm font-semibold leading-6 ${
+                className={`text-sm font-semibold leading-6 px-3 py-1 rounded-md border border-green-200/50 ${
                   location.pathname === item.href
-                    ? 'text-red-600'
-                    : 'text-gray-900 hover:text-red-600'
+                    ? 'text-red-600 border-green-400/70 bg-green-50/50'
+                    : 'text-gray-900 hover:text-red-600 hover:border-green-300/70 hover:bg-green-50/30'
                 } transition-colors`}
               >
                 {item.name}
@@ -58,7 +58,7 @@ export default function Layout({ children }) {
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
             <Link
               to="/login"
-              className="text-sm font-semibold leading-6 text-gray-900 hover:text-red-600 transition-colors"
+              className="text-sm font-semibold leading-6 text-gray-900 hover:text-red-600 transition-colors px-3 py-1 rounded-md border border-green-200/50 hover:border-green-300/70 hover:bg-green-50/30"
             >
               Log in <span aria-hidden="true">&rarr;</span>
             </Link>
