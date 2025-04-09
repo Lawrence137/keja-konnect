@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
+import { motion, AnimatePresence } from 'framer-motion';
 import Footer from './Footer';
 
 const navigation = [
@@ -14,6 +15,11 @@ export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+
+  // Close mobile menu when route changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
@@ -61,61 +67,108 @@ export default function Layout({ children }) {
       </header>
 
       {/* Mobile menu */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
-          {/* Backdrop */}
-          <div 
-            className="fixed inset-0 bg-gray-900/80 backdrop-blur-sm" 
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          
-          {/* Menu panel */}
-          <div className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm">
-            <div className="flex items-center justify-between">
-              <Link to="/" className="-m-1.5 p-1.5">
-                <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">Keja Konnect</span>
-              </Link>
-              <button
-                type="button"
-                className="-m-2.5 rounded-md p-2.5 text-gray-700 hover:bg-gray-100 transition-colors"
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <span className="sr-only">Close menu</span>
-                <XMarkIcon className="h-6 w-6" aria-hidden="true" />
-              </button>
-            </div>
-            <div className="mt-6 flow-root">
-              <div className="-my-6 divide-y divide-gray-500/10">
-                <div className="space-y-2 py-6">
-                  {navigation.map((item) => (
-                    <Link
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <div className="fixed inset-0 z-50 lg:hidden">
+            {/* Backdrop */}
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" 
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            
+            {/* Menu panel */}
+            <motion.div 
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed inset-y-0 right-0 z-50 w-3/4 overflow-y-auto bg-gradient-to-br from-green-900 to-green-800 shadow-xl"
+            >
+              <div className="flex items-center justify-between p-6 border-b border-green-700/30">
+                <Link to="/" className="-m-1.5 p-1.5">
+                  <span className="text-2xl font-bold bg-gradient-to-r from-green-600 to-red-600 bg-clip-text text-transparent">Keja Konnect</span>
+                </Link>
+                <button
+                  type="button"
+                  className="-m-2.5 rounded-md p-2.5 text-white hover:bg-green-700/30 transition-colors"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span className="sr-only">Close menu</span>
+                  <XMarkIcon className="h-6 w-6" aria-hidden="true" />
+                </button>
+              </div>
+              <div className="px-6 py-8">
+                <div className="space-y-6">
+                  {navigation.map((item, index) => (
+                    <motion.div
                       key={item.name}
-                      to={item.href}
-                      className={`-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 transition-colors ${
-                        location.pathname === item.href
-                          ? 'text-red-600 bg-red-50'
-                          : 'text-gray-900 hover:bg-gray-50'
-                      }`}
-                      onClick={() => setMobileMenuOpen(false)}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: index * 0.1, duration: 0.3 }}
                     >
-                      {item.name}
-                    </Link>
+                      <Link
+                        to={item.href}
+                        className={`block rounded-lg px-4 py-3 text-base font-medium transition-all ${
+                          location.pathname === item.href
+                            ? 'bg-red-500 text-white shadow-md'
+                            : 'text-green-100 hover:bg-green-700/30 hover:text-white'
+                        }`}
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    </motion.div>
                   ))}
                 </div>
-                <div className="py-6">
-                  <Link
-                    to="/login"
-                    className="block w-full rounded-full bg-green-600 px-4 py-2.5 text-center text-sm font-semibold text-white shadow-sm hover:bg-green-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
+                
+                <div className="mt-10 pt-6 border-t border-green-700/30">
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.3 }}
                   >
-                    Log in
-                  </Link>
+                    <Link
+                      to="/login"
+                      className="block w-full rounded-lg bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-center text-base font-medium text-white shadow-md hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-[1.02]"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Log in
+                    </Link>
+                  </motion.div>
+                  
+                  <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.5, duration: 0.3 }}
+                    className="mt-4"
+                  >
+                    <Link
+                      to="/signup"
+                      className="block w-full rounded-lg border border-green-500/50 px-4 py-3 text-center text-base font-medium text-green-100 hover:bg-green-700/30 transition-all"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Sign up
+                    </Link>
+                  </motion.div>
                 </div>
+                
+                <motion.div 
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.3 }}
+                  className="mt-10 text-center text-green-200/70 text-sm"
+                >
+                  <p>© 2025 Keja Konnect</p>
+                </motion.div>
               </div>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
       <main className="flex-1">
         {children}
