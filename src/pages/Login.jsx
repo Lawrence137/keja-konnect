@@ -11,14 +11,21 @@ const Login = () => {
     email: '',
     password: '',
   });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (error) setError('');
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError('');
+    
     try {
       const userCredential = await signInWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
@@ -31,24 +38,33 @@ const Login = () => {
         localStorage.setItem('userType', userData.userType);
         localStorage.setItem('userName', userData.fullName);
         
-        // Redirect based on user type
-        switch (userData.userType) {
-          case 'tenant':
-            navigate('/tenant-dashboard');
-            break;
-          case 'landlord':
-            navigate('/landlord-dashboard');
-            break;
-          case 'agent':
-            navigate('/agent-dashboard');
-            break;
-          default:
-            navigate('/');
-        }
+        // Always redirect to homepage after successful login
+        navigate('/');
+      } else {
+        // If user document doesn't exist, still redirect to homepage
+        navigate('/');
       }
     } catch (error) {
       console.error('Error during login:', error);
-      alert(error.message);
+      // Provide more user-friendly error messages
+      switch (error.code) {
+        case 'auth/invalid-email':
+          setError('Invalid email address format.');
+          break;
+        case 'auth/user-disabled':
+          setError('This account has been disabled.');
+          break;
+        case 'auth/user-not-found':
+          setError('No account found with this email.');
+          break;
+        case 'auth/wrong-password':
+          setError('Incorrect password.');
+          break;
+        default:
+          setError('Failed to sign in. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -73,6 +89,12 @@ const Login = () => {
             <p className="text-green-100">Sign in to your account</p>
           </div>
           
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg text-red-200 text-sm">
+              {error}
+            </div>
+          )}
+          
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-green-100 mb-1">
@@ -89,6 +111,7 @@ const Login = () => {
                   onChange={handleChange}
                   className="block w-full rounded-lg bg-white/10 border border-white/20 py-2.5 px-4 text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                   placeholder="you@example.com"
+                  disabled={isLoading}
                 />
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-green-500/20 to-transparent pointer-events-none"></div>
               </div>
@@ -109,6 +132,7 @@ const Login = () => {
                   onChange={handleChange}
                   className="block w-full rounded-lg bg-white/10 border border-white/20 py-2.5 px-4 text-white placeholder-green-200/50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all"
                   placeholder="••••••••"
+                  disabled={isLoading}
                 />
                 <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-green-500/20 to-transparent pointer-events-none"></div>
               </div>
@@ -121,6 +145,7 @@ const Login = () => {
                   name="remember-me"
                   type="checkbox"
                   className="h-4 w-4 text-red-500 focus:ring-red-500 border-gray-300 rounded"
+                  disabled={isLoading}
                 />
                 <label htmlFor="remember-me" className="ml-2 block text-sm text-green-100">
                   Remember me
@@ -137,12 +162,21 @@ const Login = () => {
             <div className="pt-2">
               <button
                 type="submit"
-                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all transform hover:scale-[1.02]"
+                className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-white bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isLoading}
               >
-                <span>Sign in</span>
-                <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
-                </svg>
+                {isLoading ? (
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                ) : null}
+                <span>{isLoading ? 'Signing in...' : 'Sign in'}</span>
+                {!isLoading && (
+                  <svg className="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path>
+                  </svg>
+                )}
               </button>
             </div>
           </form>
