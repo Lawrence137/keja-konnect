@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline';
 import { motion, AnimatePresence } from 'framer-motion';
+import { auth } from '../firebase/config';
+import { onAuthStateChanged } from 'firebase/auth';
 import Footer from './Footer';
+import SignOut from './auth/SignOut';
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -14,8 +17,18 @@ const navigation = [
 
 export default function Layout({ children }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const location = useLocation();
   const isHomePage = location.pathname === '/';
+
+  // Handle authentication state
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   // Close mobile menu when route changes
   useEffect(() => {
@@ -57,12 +70,16 @@ export default function Layout({ children }) {
             ))}
           </div>
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <Link
-              to="/login"
-              className="text-sm font-semibold leading-6 text-gray-900 hover:text-red-600 transition-colors px-3 py-1 rounded-md border border-green-200/50 hover:border-green-300/70 hover:bg-green-50/30"
-            >
-              Log in <span aria-hidden="true">&rarr;</span>
-            </Link>
+            {isAuthenticated ? (
+              <SignOut />
+            ) : (
+              <Link
+                to="/login"
+                className="text-sm font-semibold leading-6 text-gray-900 hover:text-red-600 transition-colors px-3 py-1 rounded-md border border-green-200/50 hover:border-green-300/70 hover:bg-green-50/30"
+              >
+                Log in <span aria-hidden="true">&rarr;</span>
+              </Link>
+            )}
           </div>
         </nav>
       </header>
@@ -127,34 +144,46 @@ export default function Layout({ children }) {
                 </div>
                 
                 <div className="mt-10 pt-6 border-t border-green-700/30">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.3 }}
-                  >
-                    <Link
-                      to="/login"
-                      className="block w-full rounded-lg bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-center text-base font-medium text-white shadow-md hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-[1.02]"
-                      onClick={() => setMobileMenuOpen(false)}
+                  {isAuthenticated ? (
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.4, duration: 0.3 }}
                     >
-                      Log in
-                    </Link>
-                  </motion.div>
-                  
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5, duration: 0.3 }}
-                    className="mt-4"
-                  >
-                    <Link
-                      to="/signup"
-                      className="block w-full rounded-lg border border-green-500/50 px-4 py-3 text-center text-base font-medium text-green-100 hover:bg-green-700/30 transition-all"
-                      onClick={() => setMobileMenuOpen(false)}
-                    >
-                      Sign up
-                    </Link>
-                  </motion.div>
+                      <SignOut isMobile />
+                    </motion.div>
+                  ) : (
+                    <>
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.4, duration: 0.3 }}
+                      >
+                        <Link
+                          to="/login"
+                          className="block w-full rounded-lg bg-gradient-to-r from-red-600 to-red-500 px-4 py-3 text-center text-base font-medium text-white shadow-md hover:from-red-700 hover:to-red-600 transition-all transform hover:scale-[1.02]"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Log in
+                        </Link>
+                      </motion.div>
+                      
+                      <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.5, duration: 0.3 }}
+                        className="mt-4"
+                      >
+                        <Link
+                          to="/signup"
+                          className="block w-full rounded-lg border border-green-500/50 px-4 py-3 text-center text-base font-medium text-green-100 hover:bg-green-700/30 transition-all"
+                          onClick={() => setMobileMenuOpen(false)}
+                        >
+                          Sign up
+                        </Link>
+                      </motion.div>
+                    </>
+                  )}
                 </div>
                 
                 <motion.div 
