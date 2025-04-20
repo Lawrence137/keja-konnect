@@ -45,12 +45,13 @@ const SignUp = () => {
       );
       const user = userCredential.user;
 
-      // Save user data to Firestore
+      // Save user data to Firestore with initialized savedProperties array
       await setDoc(doc(db, 'users', user.uid), {
         fullName: formData.fullName,
         email: formData.email,
         userType: formData.userType,
         createdAt: new Date().toISOString(),
+        savedProperties: [] // Initialize empty savedProperties array
       });
 
       // Store user info in localStorage
