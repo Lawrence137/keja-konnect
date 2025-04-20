@@ -5,6 +5,8 @@ import Features from '../components/home/Features';
 import FeaturedProperties from '../components/home/FeaturedProperties';
 import Categories from '../components/home/Categories';
 import CTA from '../components/home/CTA';
+import AboutSection from '../components/home/AboutSection';
+import Stats from '../components/home/Stats';
 
 export default function Home() {
   // Smooth scroll progress
@@ -25,6 +27,8 @@ export default function Home() {
 
       <Hero />
       <Features />
+      <Stats />
+      <AboutSection />
       <FeaturedProperties />
       <Categories />
       <CTA />

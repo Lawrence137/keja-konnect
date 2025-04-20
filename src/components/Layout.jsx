@@ -9,6 +9,7 @@ const navigation = [
   { name: 'Listings', href: '/listings' },
   { name: 'Map', href: '/map' },
   { name: 'Saved', href: '/saved' },
+  { name: 'About', href: '/about' },
 ];
 
 export default function Layout({ children }) {

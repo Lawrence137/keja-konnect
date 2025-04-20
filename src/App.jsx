@@ -9,6 +9,7 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Listings from "./pages/Listings";
 import PropertyDetails from "./pages/PropertyDetails";
+import About from "./pages/About";
 
 // Create a client
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/listings" element={<Listings />} />
             <Route path="/property/:id" element={<PropertyDetails />} />
+            <Route path="/about" element={<About />} />
           </Routes>
         </Layout>
       </Router>
